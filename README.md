@@ -1,1 +1,1 @@
-"# Home-Lab: Infrastructure as Code" 
+# Home-Lab: Infrastructure as Code
