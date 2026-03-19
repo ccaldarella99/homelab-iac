@@ -1,0 +1,55 @@
+---
+- name: Prepare Proxmox Node for Terraform
+  hosts: proxmox_nodes
+  become: true
+  vars:
+    template_id: 9000
+    template_name: "debian-13-trixie-template"
+    cloud_image_url: "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2"
+    storage_pool: "local-lvm"
+
+  tasks:
+    - name: Install python3-proxmoxer for Ansible API interaction
+      ansible.builtin.apt:
+        name: python3-proxmoxer
+        state: present
+        update_cache: yes
+
+    - name: Check if template already exists
+      ansible.builtin.command: "qm status {{ template_id }}"
+      register: template_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Create Cloud-Init Template
+      when: template_check.failed
+      block:
+        - name: Download Debian 13 Cloud Image
+          ansible.builtin.get_url:
+            url: "{{ cloud_image_url }}"
+            dest: "/tmp/debian-13.qcow2"
+            mode: '0644'
+
+        - name: Create VM for template
+          ansible.builtin.command: >
+            qm create {{ template_id }} --name {{ template_name }} 
+            --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0 
+            --cpu host --scsihw virtio-scsi-pci
+
+        - name: Import disk to storage
+          ansible.builtin.command: "qm importdisk {{ template_id }} /tmp/debian-13.qcow2 {{ storage_pool }}"
+
+        - name: Attach disk and Cloud-Init drive
+          ansible.builtin.command: "{{ item }}"
+          with_items:
+            - "qm set {{ template_id }} --scsi0 {{ storage_pool }}:vm-{{ template_id }}-disk-0"
+            - "qm set {{ template_id }} --ide2 {{ storage_pool }}:cloudinit"
+            - "qm set {{ template_id }} --boot c --bootdisk scsi0 --serial0 socket --vga serial0"
+
+        - name: Convert VM to Template
+          ansible.builtin.command: "qm template {{ template_id }}"
+
+        - name: Cleanup downloaded image
+          ansible.builtin.file:
+            path: "/tmp/debian-13.qcow2"
+            state: absente
