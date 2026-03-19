@@ -9,6 +9,14 @@
     storage_pool: "local-lvm"
 
   tasks:
+    - name: Upload Cloud-init snippet to Proxmox
+      ansible.builtin.copy:
+        src: ../files/debian-trixie-init.yaml  # File located in your GitHub repo
+        dest: /var/lib/vz/snippets/debian-trixie-init.yaml
+        owner: root
+        group: root
+        mode: '0644'
+
     - name: Install python3-proxmoxer for Ansible API interaction
       ansible.builtin.apt:
         name: python3-proxmoxer
