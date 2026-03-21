@@ -72,6 +72,20 @@ resource "proxmox_virtual_environment_vm" "home_assistant" {
   memory { dedicated = 4096 }
 
   operating_system { type = "l26" } # Linux Kernel 2.6+
+  
+  network_device {
+    bridge  = "vmbr0"
+    vlan_id = var.networks["apps"].id  # Drops HA directly into the Apps VLAN
+  }
+
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "10.30.30.10/24"              # Matching  10.x.x.x layout
+        gateway = var.networks["apps"].gateway  # Mikrotik IP for this VLAN
+      }
+    }
+  }
 }
 
 
@@ -109,3 +123,5 @@ resource "proxmox_virtual_environment_vm" "docker_host" {
     flags = ["+sse3"] # Manual flag poke for Trixie's higher baseline requirements
   }
 }
+
+

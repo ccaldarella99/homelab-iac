@@ -1,0 +1,60 @@
+---
+- name: Post-Install Setup for Proxmox Nodes
+  hosts: proxmox_nodes
+  vars:
+    tailscale_auth_key: "tskey-auth-yourkeyhere" # Use Ansible Vault for this in production
+  tasks:
+    - name: Ensure 'chops' user exists
+      user:
+        name: chops
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+
+    - name: Configure Terraform Role and User
+      shell: |
+        pveum role add Terraform -privs "VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.Allocate Datastore.AllocateSpace Datastore.Audit SDN.Use SDN.Audit" || true
+        pveum user add terraform-prov@pve || true
+        pveum aclmod / -user terraform-prov@pve -role Terraform
+        pveum user token add terraform-prov@pve mytoken --privsep=0 || true
+      register: pveum_output
+      changed_when: "'already exists' not in pveum_output.stderr"
+
+    - name: Remove Proxmox Nag Screen
+      get_url:
+        url: https://raw.githubusercontent.com/Meliox/PVE-mods/refs/heads/main/pve-mod-nag-screen.sh
+        dest: /tmp/pve-mod-nag-screen.sh
+        mode: '0755'
+    - name: Run Nag Screen Script
+      command: bash /tmp/pve-mod-nag-screen.sh install
+
+    - name: Install Temperature Sensors and GUI Mod
+      block:
+        - apt:
+            name: lm-sensors
+            state: present
+        - command: sensors-detect --auto
+        - get_url:
+            url: https://raw.githubusercontent.com/Meliox/PVE-mods/refs/heads/main/pve-mod-gui-sensors.sh
+            dest: /tmp/pve-mod-gui-sensors.sh
+            mode: '0755'
+        - command: bash /tmp/pve-mod-gui-sensors.sh install
+
+    - name: Install Tailscale
+      shell: curl -fsSL https://tailscale.com/install.sh | sh
+      args:
+        creates: /usr/bin/tailscale
+
+    - name: Authenticate Tailscale
+      command: "tailscale up --authkey={{ tailscale_auth_key }}"
+      register: ts_status
+      changed_when: "'Success' in ts_status.stdout"
+
+    - name: Install and Enable Fail2Ban
+      apt:
+        name: fail2ban
+        state: present
+    - service:
+        name: fail2ban
+        state: started
+        enabled: yes 

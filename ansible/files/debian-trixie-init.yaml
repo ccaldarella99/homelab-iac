@@ -1,0 +1,20 @@
+# The Cloud-Init "Instruction manual"
+#cloud-config
+users:
+  - name: chops
+    groups: sudo
+    shell: /bin/bash
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3N...your_key_here...
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - git
+
+runcmd:
+  - systemctl enable --now qemu-guest-agent

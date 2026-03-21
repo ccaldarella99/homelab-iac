@@ -1,9 +1,13 @@
+# IDE
+.vscode/
+
 # Terraform generated files
 .terraform/
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 *.tfvars
+*.tfvars.json
 # Crash log files
 crash.log
 # CLI configuration file
@@ -14,6 +18,7 @@ terraform.rc
 # Ansible
 # Temporary files
 *.retry
+inventory/vault_pass.txt
 
 # Python cache
 */__pycache__
