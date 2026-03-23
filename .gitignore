@@ -40,6 +40,8 @@ fail2ban/
 uptime-kuma/uploads/
 uptime-kuma/generator/
 uptime-kuma/screenshots
+uptime-kuma/kuma.db-shm
+uptime-kuma/kuma.db-wal
 uptime-kuma/kuma.db*
 
 # --- Homarr ---
