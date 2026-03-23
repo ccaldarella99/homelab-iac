@@ -1,0 +1,42 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    volumes:
+      - /mnt/usb-data/services/uptime-kuma:/app/data
+    ports:
+      - 3001:3001
+    restart: always
+
+  beszel:
+    image: 'henrygd/beszel:latest'
+    container_name: beszel-hub
+    volumes:
+      - /mnt/usb-data/services/beszel:/var/lib/beszel
+    ports:
+      - 8090:8090
+    restart: always
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 3000:3000
+    volumes:
+      - /mnt/usb-data/services/homepage:/app/config # Config stays on USB
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Allows Homepage to show container status
+    environment:
+    - HOMEPAGE_ALLOWED_HOSTS=100.114.25.87:3000,192.168.88.99:3000,localhost:3000,127.0.0.1:3000
+    restart: always
+
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # For docker integration
+      - /mnt/usb-data/services/homarr/configs:/app/data/configs
+      - /mnt/usb-data/services/homarr/icons:/app/public/icons
+      - /mnt/usb-data/services/homarr/data:/data
+    ports:
+      - 7575:7575
