@@ -7,6 +7,9 @@
 .ansible/
 .ssh/
 
+# unused stuff
+adguard/
+
 # --- Secrets (CRITICAL) ---
 # Never commit your Tailscale keys, passwords, or API tokens
 *.env
