@@ -1,6 +1,52 @@
 # IDE
 .vscode/
 
+# --- General System Junk ---
+*.log
+*.tmp
+.ansible/
+.ssh/
+
+# --- Secrets (CRITICAL) ---
+# Never commit your Tailscale keys, passwords, or API tokens
+*.env
+secrets.yml
+*.key
+*.pem
+inventory.ini
+*.pub
+secrets.*
+ansible_key
+
+# logs and databases
+*.sqlite
+*.db
+*.log
+uptime-kuma/uptime-kuma.db*
+beszel/data.db*
+homepage/logs/
+crash.log
+
+# --- fail2ban ---
+# Ignore all except in config dir
+fail2ban/
+!fail2ban/config/
+
+# --- Uptime Kuma ---
+# Ignore the actual SQLite database and upload folder
+uptime-kuma/uploads/
+uptime-kuma/generator/
+uptime-kuma/screenshots
+
+# --- Homarr ---
+# Homarr stores its layout in a JSON/SQLite database
+homarr/data/
+homarr/configs/*.json
+!homarr/configs/settings.json # Optional: keep basic settings but ignore layouts
+
+# --- Beszel ---
+beszel/key
+
 # Terraform generated files
 .terraform/
 .terraform.lock.hcl
@@ -8,20 +54,14 @@
 *.tfstate.*
 *.tfvars
 *.tfvars.json
-# Crash log files
-crash.log
 # CLI configuration file
 .terraformrc
 terraform.rc
 
-
 # Ansible
-# Temporary files
+# Ignore the retry files that get created on failure
 *.retry
 inventory/vault_pass.txt
-ansible_key
-*.pub
-secrets.*
 
 # Python cache
 */__pycache__
@@ -29,15 +69,6 @@ secrets.*
 
 # Cache
 .cache
-
-
-# services and databases
-*.log
-*.sqlite
-*.db
-fail2ban/*
-homepage/logs/*
-uptime-kuma/screenshots
 
 
 # Windows thumbnail cache files
