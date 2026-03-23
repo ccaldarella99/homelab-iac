@@ -12,3 +12,9 @@
         description: Resource Stats
         server: my-docker
         container: uptime-kuma
+    - Homarr:
+        icon: homarr.png
+        href: http://192.168.88.99:7575
+        description: Home Automation
+        server: my-docker
+        container: uptime-kuma
