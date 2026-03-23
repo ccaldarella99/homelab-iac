@@ -40,7 +40,7 @@ fail2ban/
 uptime-kuma/uploads/
 uptime-kuma/generator/
 uptime-kuma/screenshots
-kuma.db*
+uptime-kuma/kuma.db*
 
 # --- Homarr ---
 # Homarr stores its layout in a JSON/SQLite database
