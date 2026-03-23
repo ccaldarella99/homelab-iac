@@ -19,6 +19,9 @@ terraform.rc
 # Temporary files
 *.retry
 inventory/vault_pass.txt
+ansible_key
+*.pub
+secrets.*
 
 # Python cache
 */__pycache__
@@ -26,6 +29,15 @@ inventory/vault_pass.txt
 
 # Cache
 .cache
+
+
+# services and databases
+*.log
+*.sqlite
+*.db
+fail2ban/*
+homepage/logs/*
+uptime-kuma/screenshots
 
 
 # Windows thumbnail cache files
