@@ -1,0 +1,43 @@
+---
+- name: Proxmox Node Infrastructure Setup
+  hosts: proxmox_nodes
+  become: yes
+  vars:
+    # It's best to use ansible-vault for the key, but we'll use a var for now
+    tailscale_auth_key: "tskey-auth-your-key-here"
+    beszel_hub_port: "8090"
+    beszel_hub_ip: "192.168.88.99" # Your Pi's IP
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Tailscale
+      shell: curl -fsSL https://tailscale.com/install.sh | sh
+      args:
+        creates: /usr/bin/tailscale
+
+    - name: Authenticate Tailscale
+      shell: "tailscale up --authkey={{ tailscale_auth_key }} --accept-routes"
+      register: tailscale_result
+      changed_when: "'is already running' not in tailscale_result.stderr"
+
+    - name: Install Docker (Required for Beszel Agent)
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        creates: /usr/bin/docker
+
+    - name: Deploy Beszel Agent
+      docker_container:
+        name: beszel-agent
+        image: henrygd/beszel-agent:latest
+        restart_policy: always
+        network_mode: host
+        privileged: yes
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+        env:
+          PORT: "4567"
+          KEY: "your-beszel-hub-public-key" # Get this from the Beszel Web UI
