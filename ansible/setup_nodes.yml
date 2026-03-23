@@ -2,9 +2,9 @@
 - name: Proxmox Node Infrastructure Setup
   hosts: proxmox_nodes
   become: yes
+  vars_files:
+    - vars/secrets.yml  # This pulls the encrypted variables
   vars:
-    # It's best to use ansible-vault for the key, but we'll use a var for now
-    tailscale_auth_key: "tskey-auth-your-key-here"
     beszel_hub_port: "8090"
     beszel_hub_ip: "192.168.88.99" # Your Pi's IP
 
