@@ -27,7 +27,7 @@ homelab-iac/
 │   └── docker-compose/
 ├──phenom-b/
 │   └── docker-compose/
-├──dell_optiplex/
+├──dell-optiplex/
 │   └── docker-compose/
 ├── .gitignore						    # IMPORTANT: Ignore .tfstate and secrets
 ├── LICENSE 						    # License
