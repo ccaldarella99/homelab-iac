@@ -70,6 +70,7 @@ terraform.rc
 *.retry
 inventory/vault_pass.txt
 ansible/inventory/hosts.ini
+ansible/inventory/hosts.ini.save
 
 # Python cache
 */__pycache__
