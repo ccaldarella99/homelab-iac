@@ -1,0 +1,14 @@
+[proxmox_nodes]
+phenom-a ansible_host=192.168.88.201 # Your Management IP for the host
+optiplex ansible_host=10.99.99.13 ansible_user=root
+
+[apps_vms]
+hass-io ansible_host=10.30.30.10
+docker-media ansible_host=10.30.30.11
+
+[infra_vms]
+adguard-primary ansible_host=10.10.10.5
+mqtt-broker ansible_host=10.10.10.6
+
+[storage_vms]
+docker-host ansible_host=10.40.40.10
