@@ -2,8 +2,8 @@
 - hosts: proxmox_node
   vars:
     # Proxmox API Credentials (Use Ansible Vault for these in production!)
-    haos_proxmox_api_user: "chops@pam"
-    haos_proxmox_api_password: ${PROXMOX_PW_CHOPS}
+    haos_proxmox_api_user: "root@pam"
+    haos_proxmox_api_password: ${PROXMOX_PW}
     
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
