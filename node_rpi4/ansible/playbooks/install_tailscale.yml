@@ -1,0 +1,19 @@
+---
+- name: Install and Start Tailscale
+  hosts: proxmox_nodes
+  become: yes
+  tasks:
+    - name: Download and run Tailscale installation script
+      shell: curl -fsSL https://tailscale.com/install.sh | sh
+      args:
+        creates: /usr/bin/tailscale
+
+    - name: Check if Tailscale is already authenticated
+      shell: tailscale status
+      register: tailscale_status
+      failed_when: false
+      changed_when: false
+
+    - name: Authenticate Tailscale
+      shell: tailscale up --authkey={{ tailscale_auth_key }}
+      when: "'Logged out' in tailscale_status.stdout or 'No Tailscale' in tailscale_status.stdout"
