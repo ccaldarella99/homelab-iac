@@ -1,0 +1,46 @@
+services:
+  # MQTT Broker for Home Assistant
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt
+    restart: always
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+
+  # Automation Engine
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node_red
+    restart: always
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red/data:/data
+
+  # Password Manager
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - SIGNUPS_ALLOWED=false # Secure it once you create your account
+    ports:
+      - "8081:80"
+    volumes:
+      - ./vaultwarden/data:/data
+
+  # Network-wide Ad Blocking
+  adguard:
+    image: adguard/adguardhome
+    container_name: adguard
+    restart: always
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:3000/tcp"
+    volumes:
+      - ./adguard/work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
