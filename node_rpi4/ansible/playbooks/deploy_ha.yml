@@ -1,5 +1,6 @@
 ---
 - hosts: proxmox_nodes
+  become: yes  # This tells Ansible to use sudo
   # This tells Ansible to use the new collection for any roles called
   collections:
     - community.proxmox
@@ -9,6 +10,10 @@
     haos_proxmox_api_user: "chops@pam"
     haos_proxmox_api_password: "{{ lookup('env', 'PROXMOX_PW_CHOPS') }}"
     
+    # Add these two lines to satisfy the role's logic
+    haos_proxmox_mac_address: !!null
+    haos_proxmox_adapter: "virtio,bridge=vmbr0"
+
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
     haos_proxmox_vm_id: 100
