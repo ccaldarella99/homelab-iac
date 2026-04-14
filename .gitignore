@@ -44,6 +44,12 @@ uptime-kuma/screenshots
 uptime-kuma/kuma.db-shm
 uptime-kuma/kuma.db-wal
 uptime-kuma/kuma.db*
+node_rpi4/uptime-kuma/kuma.db-shm
+node_rpi4/uptime-kuma/kuma.db-wal
+kuma.db-shm
+kuma.db-wal
+*/kuma.db-shm
+*/kuma.db-wal
 
 # --- Homarr ---
 # Homarr stores its layout in a JSON/SQLite database
