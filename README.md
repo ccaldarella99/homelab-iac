@@ -3,24 +3,35 @@
 ## Directory Guide
 ```
 homelab-iac/
-├── ansible/
-│   ├── inventory/					# IPs for Phenom-A, Pi, and New VMs
-│   ├── group_vars/					# Credentials & Trixie-specific tweaks
-│   ├── playbooks/
-│   │   ├── prepare_node.yml		# Run this BEFORE Terraform
-│   │   └── setup_apps.yml			# Run this AFTER Terraform
-│   └── roles/						# Modular app configs (AdGuard, HA, etc.)
-├── terraform/
-│   ├── modules/					# Reusable blocks (VM, LXC, Network)
-│   ├── environments/
-│   │   └── phenom-node-a/			# Specific config for your Phenom II
-│   │       ├── main.tf				# Resource definitions
-│   │       ├── provider.tf			# Proxmox API connection
-│   │       ├── variables.tf		# Node-specific IPs/IDs
-│   │       └── terraform.tfvars 	# Secrets (DON'T COMMIT TO GITHUB)
-│   └── scripts/					# Helper scripts for TF
-├── .gitignore						# IMPORTANT: Ignore .tfstate and secrets
-└── README.md						# Your "Runbook"
+├──node_rpi4/
+│   ├── ansible/
+│   │   ├── inventory/					# IPs for Phenom-A, Pi, and New VMs
+│   │   ├── group_vars/					# Credentials & Trixie-specific tweaks
+│   │   ├── playbooks/
+│   │   │   ├── prepare_node.yml		# Run this BEFORE Terraform
+│   │   │   └── setup_apps.yml			# Run this AFTER Terraform
+│   │   └── roles/						# Modular app configs (AdGuard, HA, etc.)
+│   ├── terraform/
+│   │   ├── modules/					# Reusable blocks (VM, LXC, Network)
+│   │   │   ├── environments/
+│   │   │   └── phenom-node-a/			# Specific config for your Phenom II
+│   │   │       ├── main.tf				# Resource definitions
+│   │   │       ├── provider.tf			# Proxmox API connection
+│   │   │       ├── variables.tf		# Node-specific IPs/IDs
+│   │   │       └── terraform.tfvars 	# Secrets (DON'T COMMIT TO GITHUB)
+│   │   └── scripts/					# Helper scripts for TF
+│   ├── docker-compose/
+│   ├── homarr/
+│   └── homepage/
+├──phenom-a/
+│   └── docker-compose/
+├──phenom-b/
+│   └── docker-compose/
+├──dell_optiplex/
+│   └── docker-compose/
+├── .gitignore						    # IMPORTANT: Ignore .tfstate and secrets
+├── LICENSE 						    # License
+└── README.md						    # Your "Runbook"
 ```
 
 ## Starting from pi
