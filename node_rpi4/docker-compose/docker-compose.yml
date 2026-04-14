@@ -40,3 +40,30 @@ services:
       - /mnt/usb-data/services/node_rpi4/homarr/data:/data
     ports:
       - 7575:7575
+  
+  # Watchtower: Automatically updates your containers when new images are released
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Optional: Persist watchtower logs to USB if you enable logging to file
+      - /mnt/usb-data/services/node_rpi4/watchtower/logs:/logs
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=86400 # Checks once every 24 hours
+
+  # Dozzle: Real-time log viewer for all containers on this node
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+    environment:
+      - DOZZLE_LEVEL=info
+      # Dozzle is a passive viewer; it reads from the socket, 
+      # so it doesn't need its own data volume.
