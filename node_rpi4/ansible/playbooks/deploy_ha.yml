@@ -6,8 +6,8 @@
   
   vars:
     # Use Jinja2 to pull your environment variable
-    haos_proxmox_api_user: "root@pam"
-    haos_proxmox_api_password: "{{ lookup('env', 'PROXMOX_PW') }}"
+    haos_proxmox_api_user: "chops@pam"
+    haos_proxmox_api_password: "{{ lookup('env', 'PROXMOX_PW_CHOPS') }}"
     
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
