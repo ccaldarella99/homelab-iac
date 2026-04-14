@@ -3,7 +3,7 @@ services:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
     volumes:
-      - /mnt/usb-data/services/uptime-kuma:/app/data
+      - /mnt/usb-data/services/node_rpi4/uptime-kuma:/app/data
     ports:
       - 3001:3001
     restart: always
@@ -12,7 +12,7 @@ services:
     image: 'henrygd/beszel:latest'
     container_name: beszel-hub
     volumes:
-      - /mnt/usb-data/services/beszel:/var/lib/beszel
+      - /mnt/usb-data/services/node_rpi4/beszel:/var/lib/beszel
     ports:
       - 8090:8090
     restart: always
@@ -23,7 +23,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - /mnt/usb-data/services/homepage:/app/config # Config stays on USB
+      - /mnt/usb-data/services/node_rpi4/homepage:/app/config # Config stays on USB
       - /var/run/docker.sock:/var/run/docker.sock:ro # Allows Homepage to show container status
     environment:
     - HOMEPAGE_ALLOWED_HOSTS=100.114.25.87:3000,192.168.88.99:3000,localhost:3000,127.0.0.1:3000
@@ -35,8 +35,8 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # For docker integration
-      - /mnt/usb-data/services/homarr/configs:/app/data/configs
-      - /mnt/usb-data/services/homarr/icons:/app/public/icons
-      - /mnt/usb-data/services/homarr/data:/data
+      - /mnt/usb-data/services/node_rpi4/homarr/configs:/app/data/configs
+      - /mnt/usb-data/services/node_rpi4/homarr/icons:/app/public/icons
+      - /mnt/usb-data/services/node_rpi4/homarr/data:/data
     ports:
       - 7575:7575
