@@ -11,8 +11,8 @@
     haos_proxmox_api_password: "{{ lookup('env', 'PROXMOX_PW_CHOPS') }}"
     
     # Add these two lines to satisfy the role's logic
-    haos_proxmox_mac_address: !!null
-    haos_proxmox_adapter: "virtio,bridge=vmbr0"
+    haos_proxmox_mac_address: "84:2B:2B:BE:59:1F"
+    haos_proxmox_adapter: "virtio={{ haos_proxmox_mac_address }},bridge=vmbr0"
 
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
