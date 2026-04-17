@@ -26,22 +26,17 @@
     haos_proxmox_storage: "local-lvm" 
     haos_proxmox_onboot: true
 
-  tasks:
-    # The role already downloaded the image in your previous failed runs, 
-    # so we just finish the job manually.
-    - name: Create HAOS VM Manually
-      shell: |
-        qm create {{ haos_proxmox_vm_id }} --name {{ haos_proxmox_name }} --memory {{ haos_proxmox_memory }} --cores {{ haos_proxmox_cores }} --net0 virtio={{ haos_actual_mac }},bridge=vmbr0 --bios ovmf --machine q35 --cpu host --onboot {{ haos_proxmox_onboot | int }}
-        
-        # This finds the image the role just downloaded in /tmp
-        IMAGE_PATH=$(find /tmp -name "haos_ova-*.qcow2" | head -n 1)
-        qm importdisk {{ haos_proxmox_vm_id }} $IMAGE_PATH {{ haos_proxmox_storage }}
-        
-        # Set up the boot drive and EFI
-        qm set {{ haos_proxmox_vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ haos_proxmox_storage }}:vm-{{ haos_proxmox_vm_id }}-disk-0,discard=on
-        qm set {{ haos_proxmox_vm_id }} --boot c --bootdisk scsi0
-        qm set {{ haos_proxmox_vm_id }} --efidisk0 {{ haos_proxmox_storage }}:0,format=qcow2,pre-enrolled-keys=1
-        
-        # Start the VM
-        qm start {{ haos_proxmox_vm_id }}
+tasks:
+    - name: Deploy HAOS via Native QM Commands
       become: yes
+      shell: |
+        if ! qm status {{ haos_proxmox_vm_id }} >/dev/null 2>&1; then
+          wget -O /tmp/haos.qcow2.xz https://github.com/home-assistant/operating-system/releases/download/12.1/haos_ova-12.1.qcow2.xz
+          xz -d /tmp/haos.qcow2.xz
+          qm create {{ haos_proxmox_vm_id }} --name {{ haos_proxmox_name }} --memory {{ haos_proxmox_memory }} --cores {{ haos_proxmox_cores }} --net0 virtio={{ haos_actual_mac }},bridge=vmbr0 --bios ovmf --machine q35 --cpu host
+          qm importdisk {{ haos_proxmox_vm_id }} /tmp/haos.qcow2 {{ haos_proxmox_storage }}
+          qm set {{ haos_proxmox_vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ haos_proxmox_storage }}:vm-{{ haos_proxmox_vm_id }}-disk-0,discard=on
+          qm set {{ haos_proxmox_vm_id }} --efidisk0 {{ haos_proxmox_storage }}:0,format=qcow2,pre-enrolled-keys=1
+          qm set {{ haos_proxmox_vm_id }} --boot order=scsi0
+          qm start {{ haos_proxmox_vm_id }}
+        fi
