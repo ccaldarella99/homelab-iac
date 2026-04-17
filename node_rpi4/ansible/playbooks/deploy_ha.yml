@@ -19,7 +19,7 @@
 
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
-    haos_proxmox_vm_id: 100
+    haos_proxmox_vm_id: 101
     haos_proxmox_name: "Home-Assistant-OS"
     haos_proxmox_memory: 2048
     haos_proxmox_cores: 1 
