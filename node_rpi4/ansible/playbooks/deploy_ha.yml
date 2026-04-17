@@ -10,10 +10,12 @@
     haos_proxmox_api_user: "chops@pam"
     haos_proxmox_api_password: "{{ lookup('env', 'PROXMOX_PW_CHOPS') }}"
 
-    # We use '| length > 0' to ensure Ansible treats the existence of the string as a Boolean True
-    haos_proxmox_mac_address: "84:2B:2B:BE:59:1F"
-    # We override the internal variable the role uses to bypass its broken logic check
-    haos_net0: "virtio={{ haos_proxmox_mac_address }},bridge=vmbr0"
+    # Use the ternary filter to force a literal Boolean result
+    haos_proxmox_mac_address: "{{ ('84:2B:2B:BE:59:1F' | length > 0) | ternary(true, false) }}"
+    
+    # Keep the actual string value for the network config
+    haos_actual_mac: "84:2B:2B:BE:59:1F"
+    haos_net0: "virtio={{ haos_actual_mac }},bridge=vmbr0"
 
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
@@ -24,5 +26,22 @@
     haos_proxmox_storage: "local-lvm" 
     haos_proxmox_onboot: true
 
-  roles:
-    - role: nununo.proxmox_haos_install
+  tasks:
+    # The role already downloaded the image in your previous failed runs, 
+    # so we just finish the job manually.
+    - name: Create HAOS VM Manually
+      shell: |
+        qm create {{ haos_proxmox_vm_id }} --name {{ haos_proxmox_name }} --memory {{ haos_proxmox_memory }} --cores {{ haos_proxmox_cores }} --net0 virtio={{ haos_actual_mac }},bridge=vmbr0 --bios ovmf --machine q35 --cpu host --onboot {{ haos_proxmox_onboot | int }}
+        
+        # This finds the image the role just downloaded in /tmp
+        IMAGE_PATH=$(find /tmp -name "haos_ova-*.qcow2" | head -n 1)
+        qm importdisk {{ haos_proxmox_vm_id }} $IMAGE_PATH {{ haos_proxmox_storage }}
+        
+        # Set up the boot drive and EFI
+        qm set {{ haos_proxmox_vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ haos_proxmox_storage }}:vm-{{ haos_proxmox_vm_id }}-disk-0,discard=on
+        qm set {{ haos_proxmox_vm_id }} --boot c --bootdisk scsi0
+        qm set {{ haos_proxmox_vm_id }} --efidisk0 {{ haos_proxmox_storage }}:0,format=qcow2,pre-enrolled-keys=1
+        
+        # Start the VM
+        qm start {{ haos_proxmox_vm_id }}
+      become: yes
