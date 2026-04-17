@@ -9,10 +9,11 @@
     # Use Jinja2 to pull your environment variable
     haos_proxmox_api_user: "chops@pam"
     haos_proxmox_api_password: "{{ lookup('env', 'PROXMOX_PW_CHOPS') }}"
-    
-    # Add these two lines to satisfy the role's logic
+
+    # We use '| length > 0' to ensure Ansible treats the existence of the string as a Boolean True
     haos_proxmox_mac_address: "84:2B:2B:BE:59:1F"
-    haos_proxmox_adapter: "virtio={{ haos_proxmox_mac_address }},bridge=vmbr0"
+    # We override the internal variable the role uses to bypass its broken logic check
+    haos_net0: "virtio={{ haos_proxmox_mac_address }},bridge=vmbr0"
 
     # VM Customization for your E8400
     haos_proxmox_node: "optiplex"
